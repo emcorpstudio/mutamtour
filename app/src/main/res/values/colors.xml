@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="colorBlueDark">#030281</color>
+    <color name="colorGreyDark">#9E9E9E</color>
+    <color name="colorGreyVeryDark">#424242</color>
+    <color name="colorGrey">#E0E0E0</color>
+    <color name="colorGreyWhite">#f3f3f5</color>
+    <color name="colorWhite">#FFFFFF</color>
+    <color name="colorBlack">#000000</color>
+    <color name="colorGreen">#19b11c</color>
+    <color name="colorRed">#bc0909</color>
+
+    <color name="colorPrimary">#FFC107</color>
+    <color name="colorPrimaryDark">#030281</color>
+    <color name="colorAccent">#1E88E5</color>
+
+    <color name="colorPrimaryLight">#42A5F5</color>
+
+    <color name="colorAccentDark">#FFB300</color>
+    <color name="colorAccentLight">#FFCA28</color>
+
+    <color name="grey_dark">#37474F</color>
+    <color name="grey_hard">#96989A</color>
+    <color name="grey_medium">#BDBFC1</color>
+    <color name="grey_soft">#F5F5F5</color>
+
+    <color name="grey_bg">#E6E6E6</color>
+
+    <color name="icon_drawer_color">#727272</color>
+</resources>
