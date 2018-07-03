@@ -7,6 +7,7 @@ import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.text.SpannableStringBuilder;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
@@ -17,6 +18,7 @@ import com.squareup.picasso.NetworkPolicy;
 import com.squareup.picasso.Picasso;
 
 import emcorp.studio.mutamtour.Library.Constant;
+import emcorp.studio.mutamtour.Library.TypefaceUtil;
 
 public class DetailBeritaActivity extends AppCompatActivity {
     private View parent_view;
@@ -26,10 +28,12 @@ public class DetailBeritaActivity extends AppCompatActivity {
     private ActionBar actionBar;
     private FloatingActionButton fab;
     String linkYoutube = "";
+    SpannableStringBuilder SS;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_detail_berita);
+        TypefaceUtil.overrideFont(getApplicationContext(), "SERIF", "fonts/barclays.ttf");
 
         parent_view = findViewById(android.R.id.content);
         title = (TextView) findViewById(R.id.title);

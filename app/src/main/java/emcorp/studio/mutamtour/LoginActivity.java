@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.text.SpannableStringBuilder;
 import android.text.method.PasswordTransformationMethod;
 import android.util.Log;
 import android.view.View;
@@ -33,6 +34,7 @@ import java.util.Map;
 import emcorp.studio.mutamtour.Library.Constant;
 import emcorp.studio.mutamtour.Library.SharedFunction;
 import emcorp.studio.mutamtour.Library.SharedPrefManager;
+import emcorp.studio.mutamtour.Library.TypefaceUtil;
 
 public class LoginActivity extends AppCompatActivity {
     EditText edtHp, edtPassword;
@@ -41,10 +43,12 @@ public class LoginActivity extends AppCompatActivity {
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
     TextView tvRegister;
+    SpannableStringBuilder SS;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
+        TypefaceUtil.overrideFont(getApplicationContext(), "SERIF", "fonts/barclays.ttf");
         getSupportActionBar().hide();
         edtHp = (EditText)findViewById(R.id.edtHp);
         edtPassword = (EditText)findViewById(R.id.edtPassword);

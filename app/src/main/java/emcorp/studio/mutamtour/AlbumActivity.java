@@ -11,14 +11,15 @@ import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.AdapterView;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
@@ -35,54 +36,86 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
-import emcorp.studio.mutamtour.Adapter.TestimoniAdapter;
+import emcorp.studio.mutamtour.Adapter.AlbumAdapter;
 import emcorp.studio.mutamtour.Library.Constant;
 import emcorp.studio.mutamtour.Library.CustomTypefaceSpan;
+import emcorp.studio.mutamtour.Library.Image;
 import emcorp.studio.mutamtour.Library.SharedFunction;
 import emcorp.studio.mutamtour.Library.TypefaceUtil;
 
-public class TestimoniActivity extends AppCompatActivity {
-    ListView list;
-    private ProgressDialog progressDialog;
-    List<String> listid = new ArrayList<String>();
-    List<String> listjudul = new ArrayList<String>();
-    List<String> listisi = new ArrayList<String>();
-    List<String> listthumbnail = new ArrayList<String>();
-    List<String> listcreated_date = new ArrayList<String>();
+public class AlbumActivity extends AppCompatActivity {
+    private ArrayList<Image> images;
+    private ProgressDialog pDialog;
+    private AlbumAdapter mAdapter;
+    private RecyclerView recyclerView;
     SpannableStringBuilder SS;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_testimoni);
+        setContentView(R.layout.activity_album);
         TypefaceUtil.overrideFont(getApplicationContext(), "SERIF", "fonts/barclays.ttf");
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
-//        setTitle("Testimoni");
         ActionBar actionBar = getSupportActionBar();
         actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + Integer.toHexString(ContextCompat.getColor(this, R.color.background_toolbar)))));
-        actionBar.setTitle(Html.fromHtml("<font color='"+String.format("#%06x", ContextCompat.getColor(this, R.color.text_toolbar) & 0xffffff)+"'>Testimoni</font>"));
+        actionBar.setTitle(Html.fromHtml("<font color='"+String.format("#%06x", ContextCompat.getColor(this, R.color.text_toolbar) & 0xffffff)+"'>Gallery</font>"));
         Typeface type = Typeface.createFromAsset(getAssets(),"fonts/barclays.ttf");
-        SS = new SpannableStringBuilder(Html.fromHtml("<font color='"+String.format("#%06x", ContextCompat.getColor(this, R.color.text_toolbar) & 0xffffff)+"'>Testimoni</font>"));
+        SS = new SpannableStringBuilder(Html.fromHtml("<font color='"+String.format("#%06x", ContextCompat.getColor(this, R.color.text_toolbar) & 0xffffff)+"'>Gallery</font>"));
         SS.setSpan (new CustomTypefaceSpan("", type), 0, SS.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
         actionBar.setTitle(SS);
         Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_material);
         upArrow.setColorFilter(ContextCompat.getColor(this, R.color.icon_toolbar), PorterDuff.Mode.SRC_ATOP);
         getSupportActionBar().setHomeAsUpIndicator(upArrow);
-        list = (ListView)findViewById(R.id.listView);
-        if(SharedFunction.getInstance(getApplicationContext()).isNetworkConnected()){
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
+        recyclerView = (RecyclerView) findViewById(R.id.recycler_view);
+
+        pDialog = new ProgressDialog(this);
+        images = new ArrayList<>();
+        mAdapter = new AlbumAdapter(getApplicationContext(), images);
+
+        RecyclerView.LayoutManager mLayoutManager = new GridLayoutManager(getApplicationContext(), 3);
+        recyclerView.setLayoutManager(mLayoutManager);
+        recyclerView.setItemAnimator(new DefaultItemAnimator());
+        recyclerView.setAdapter(mAdapter);
+
+        recyclerView.addOnItemTouchListener(new AlbumAdapter.RecyclerTouchListener(getApplicationContext(), recyclerView, new AlbumAdapter.ClickListener() {
+            @Override
+            public void onClick(View view, int position) {
+                Intent i = new Intent(AlbumActivity.this,GalleryActivity.class);
+                i.putExtra("album",images.get(position).getRecid());
+                i.putExtra("nama",images.get(position).getName());
+                startActivity(i);
+                finish();
+//                Toast.makeText(getApplicationContext(),images.get(position).getName(),Toast.LENGTH_SHORT).show();
+//                Bundle bundle = new Bundle();
+//                bundle.putSerializable("images", images);
+//                bundle.putInt("position", position);
+//
+//                FragmentTransaction ft = getSupportFragmentManager().beginTransaction();
+//                SlideshowDialogFragment newFragment = SlideshowDialogFragment.newInstance();
+//                newFragment.setArguments(bundle);
+//                newFragment.show(ft, "slideshow");
+            }
+
+            @Override
+            public void onLongClick(View view, int position) {
+
+            }
+        }));
+
+        if(SharedFunction.getInstance(AlbumActivity.this).isNetworkConnected()){
             LoadProcess();
         }else{
-            Toast.makeText(getApplicationContext(),R.string.internet_error, Toast.LENGTH_LONG).show();
+            Toast.makeText(AlbumActivity.this,R.string.internet_error, Toast.LENGTH_LONG).show();
         }
     }
 
     public void LoadProcess(){
-        progressDialog = new ProgressDialog(TestimoniActivity.this);
-        progressDialog.setMessage("Loading...");
-        progressDialog.show();
+        pDialog = new ProgressDialog(AlbumActivity.this);
+        pDialog.setMessage("Loading...");
+        pDialog.show();
         StringRequest stringRequest = new StringRequest(
                 Request.Method.POST,
                 Constant.ROOT_URL,
@@ -90,34 +123,28 @@ public class TestimoniActivity extends AppCompatActivity {
                     @Override
                     public void onResponse(String response) {
                         Log.d("CETAK",response);
-                        progressDialog.dismiss();
-                        listid.clear();
-                        listjudul.clear();
-                        listisi.clear();
-                        listthumbnail.clear();
-                        listcreated_date.clear();
+                        pDialog.dismiss();
+                        images.clear();
                         try {
                             JSONObject obj = new JSONObject(response);
                             JSONArray jsonArray = obj.getJSONArray("hasil");
                             if(jsonArray.length()==0){
                                 Toast.makeText(getApplicationContext(),"Tidak ada data", Toast.LENGTH_SHORT).show();
-                                list.setVisibility(View.GONE);
                             }else{
-                                list.setVisibility(View.VISIBLE);
                                 for (int i=0; i<jsonArray.length(); i++) {
                                     JSONObject isiArray = jsonArray.getJSONObject(i);
-                                    String id = isiArray.getString("recid");
-                                    String judul = isiArray.getString("nama");
-                                    String isi = isiArray.getString("testimoni");
-                                    String thumbnail = isiArray.getString("foto");
-                                    String created_date = isiArray.getString("tanggal");
-                                    listid.add(id);
-                                    listjudul.add(judul);
-                                    listisi.add(isi);
-                                    listthumbnail.add(thumbnail);
-                                    listcreated_date.add(created_date);
+                                    String link = Constant.PICT_URL;
+                                    String recid = isiArray.getString("recid");
+                                    String nama = isiArray.getString("nama");
+                                    String foto = link+isiArray.getString("foto");
+                                    foto = foto.replace(" ","%20");
+                                    Image image = new Image();
+                                    image.setName(nama);
+                                    image.setRecid(recid);
+                                    image.setFoto(foto);
+                                    images.add(image);
                                 }
-                                getAllData();
+                                mAdapter.notifyDataSetChanged();
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -127,7 +154,7 @@ public class TestimoniActivity extends AppCompatActivity {
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
-                        progressDialog.dismiss();
+                        pDialog.dismiss();
                         Toast.makeText(
                                 getApplicationContext(),
                                 error.getMessage(),
@@ -139,47 +166,21 @@ public class TestimoniActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("function", Constant.FUNCTION_LISTTESTIMONI);
+                params.put("function", Constant.FUNCTION_LISTALBUM);
                 params.put("key", Constant.KEY);
                 return params;
             }
         };
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         requestQueue.add(stringRequest);
-//        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);
-    }
-
-    public void getAllData(){
-        list.setAdapter(null);
-        TestimoniAdapter adapter = new TestimoniAdapter(TestimoniActivity.this, listid,listjudul,listisi,listthumbnail,listcreated_date);
-        list.setAdapter(adapter);
-        list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Intent i = new Intent(getActivity(), DetailBeritaActivity.class);
-//                i.putExtra("title",listjudul.get(position));
-//                i.putExtra("date",listcreated_date.get(position));
-//                i.putExtra("content",listisi.get(position));
-//                i.putExtra("image",listthumbnail.get(position));
-//                startActivity(i);
-//                getActivity().finish();
-            }
-        });
-        list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
-            @Override
-            public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//                dialogAdd(position);
-                return true;
-            }
-        });
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(TestimoniActivity.this);
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(AlbumActivity.this);
         switch (item.getItemId()) {
             case android.R.id.home:
-                Intent i = new Intent(TestimoniActivity.this,MainActivity.class);
+                Intent i = new Intent(AlbumActivity.this,MainActivity.class);
                 i.putExtra("MENU","MORE");
                 startActivity(i);
                 finish();
@@ -190,7 +191,7 @@ public class TestimoniActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        Intent i = new Intent(TestimoniActivity.this,MainActivity.class);
+        Intent i = new Intent(AlbumActivity.this,MainActivity.class);
         i.putExtra("MENU","MORE");
         startActivity(i);
         finish();

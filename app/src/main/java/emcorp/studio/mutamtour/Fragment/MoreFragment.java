@@ -20,12 +20,14 @@ import java.util.ArrayList;
 import java.util.List;
 
 import emcorp.studio.mutamtour.Adapter.MoreAdapter;
+import emcorp.studio.mutamtour.AlbumActivity;
 import emcorp.studio.mutamtour.BantuanActivity;
 import emcorp.studio.mutamtour.CaraDaftarActivity;
 import emcorp.studio.mutamtour.ContactUsActivity;
 import emcorp.studio.mutamtour.Library.SharedFunction;
 import emcorp.studio.mutamtour.LoginActivity;
 import emcorp.studio.mutamtour.PendaftarActivity;
+import emcorp.studio.mutamtour.PendaftaranActivity;
 import emcorp.studio.mutamtour.R;
 import emcorp.studio.mutamtour.TestimoniActivity;
 import emcorp.studio.mutamtour.WebsiteActivity;
@@ -79,7 +81,7 @@ public class MoreFragment extends Fragment {
 //                Toast.makeText(getContext(),listjudul.get(position),Toast.LENGTH_SHORT).show();
                 switch (position){
                     case 0 :
-                        Toast.makeText(getContext(),"Segera...",Toast.LENGTH_SHORT).show();
+                        Gallery();
                         break;
                     case 1 :
                         CaraDaftar();
@@ -88,7 +90,7 @@ public class MoreFragment extends Fragment {
                         Testimoni();
                         break;
                     case 3 :
-                        Toast.makeText(getContext(),"Segera...",Toast.LENGTH_SHORT).show();
+                        Pendaftaran();
                         break;
                     case 4 :
                         Pendaftar();
@@ -115,6 +117,18 @@ public class MoreFragment extends Fragment {
                 return true;
             }
         });
+    }
+
+    public void Gallery(){
+        Intent i = new Intent(getContext(), AlbumActivity.class);
+        startActivity(i);
+        getActivity().finish();
+    }
+
+    public void Pendaftaran(){
+        Intent i = new Intent(getContext(), PendaftaranActivity.class);
+        startActivity(i);
+        getActivity().finish();
     }
 
     public void Testimoni(){

@@ -7,7 +7,7 @@
     android:orientation="vertical"
     android:focusable="true"
     android:focusableInTouchMode="true"
-    android:background="@color/colorAccentDark"
+    android:background="@color/colorWhite"
     tools:context="emcorp.studio.mutamtour.LoginActivity">
 
     <LinearLayout
@@ -26,7 +26,7 @@
                 android:layout_alignParentBottom="true"
                 android:fontFamily="sans-serif-condensed"
                 android:textSize="26sp"
-                android:textColor="@color/colorWhite"
+                android:textColor="@color/colorGreyVeryDark"
                 android:layout_marginTop="20dp"
                 android:id="@+id/tvTittle"
                 android:textStyle="bold"
@@ -70,14 +70,14 @@
                     android:layout_height="30dp"
                     android:layout_marginRight="@dimen/spacing_middle"
                     android:src="@drawable/ic_phone"
-                    android:tint="@color/colorWhite" />
+                    android:tint="@color/colorGreyVeryDark" />
 
                 <EditText
                     android:id="@+id/edtHp"
                     android:layout_width="0dp"
                     android:layout_height="@dimen/spacing_xxlarge"
                     android:layout_weight="1"
-                    android:textColor="@color/colorWhite"
+                    android:textColor="@color/colorGreyVeryDark"
                     android:textColorHint="@color/grey_dark"
                     android:background="@android:color/transparent"
                     android:hint="Nomor Handphone"
@@ -91,7 +91,7 @@
                 android:layout_height="2dp"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
-                android:background="@color/colorWhite" />
+                android:background="@color/colorGreyVeryDark" />
         </LinearLayout>
 
 
@@ -114,7 +114,7 @@
                     android:layout_height="30dp"
                     android:layout_marginRight="@dimen/spacing_middle"
                     android:src="@drawable/ic_lock_small"
-                    android:tint="@color/colorWhite"/>
+                    android:tint="@color/colorGreyVeryDark"/>
 
                 <EditText
                     android:id="@+id/edtPassword"
@@ -123,7 +123,7 @@
                     android:layout_weight="1"
                     android:background="@android:color/transparent"
                     android:hint="Password"
-                    android:textColor="@color/colorWhite"
+                    android:textColor="@color/colorGreyVeryDark"
                     android:textColorHint="@color/grey_dark"
                     android:text="password"
                     android:inputType="textEmailAddress"
@@ -137,7 +137,7 @@
                 android:layout_height="2dp"
                 android:layout_marginLeft="30dp"
                 android:layout_marginRight="30dp"
-                android:background="@color/colorWhite" />
+                android:background="@color/colorGreyVeryDark" />
         </LinearLayout>
 
         <Button
@@ -168,7 +168,7 @@
             android:text="REGISTRASI"
             android:textStyle="bold"
             android:background="?attr/selectableItemBackground"
-            android:textColor="@color/colorWhite"
+            android:textColor="@color/colorPrimary"
             android:gravity="center"
             android:clickable="true"
             android:id="@+id/tvRegister"

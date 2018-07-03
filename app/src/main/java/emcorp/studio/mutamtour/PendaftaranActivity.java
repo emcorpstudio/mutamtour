@@ -1,17 +1,29 @@
 package emcorp.studio.mutamtour;
 
+import android.app.DatePickerDialog;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
 import android.text.SpannableStringBuilder;
-import android.text.method.PasswordTransformationMethod;
+import android.text.Spanned;
 import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -28,15 +40,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import emcorp.studio.mutamtour.Library.Constant;
+import emcorp.studio.mutamtour.Library.CustomTypefaceSpan;
 import emcorp.studio.mutamtour.Library.SharedFunction;
 import emcorp.studio.mutamtour.Library.TypefaceUtil;
 
-public class RegistrasiActivity extends AppCompatActivity {
+public class PendaftaranActivity extends AppCompatActivity {
     List<String> listkdprov = new ArrayList<String>();
     List<String> listnmprov = new ArrayList<String>();
     List<String> listkdkabkota = new ArrayList<String>();
@@ -46,41 +60,87 @@ public class RegistrasiActivity extends AppCompatActivity {
     List<String> listiddesa = new ArrayList<String>();
     List<String> listnmdesa = new ArrayList<String>();
     private ProgressDialog progressDialog;
-    EditText edtName,edtNoHp,edtPassword,edtKonfirmasiPassword;
+    EditText edtName,edtNoHp,edtEmail,edtAlamat,edtTglLahir;
     Spinner spinProvinsi,spinKabupaten,spinKecamatan,spinDesa;
     Button btnDafter;
+    private int mYear, mMonth, mDay;
+    String tanggalLahir = "";
+    RadioButton radLaki, radPerempuan;
     SpannableStringBuilder SS;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_registrasi);
+        setContentView(R.layout.activity_pendaftaran);
         TypefaceUtil.overrideFont(getApplicationContext(), "SERIF", "fonts/barclays.ttf");
-        getSupportActionBar().hide();
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setHomeButtonEnabled(true);
+
         Typeface type = Typeface.createFromAsset(getAssets(),"fonts/barclays.ttf");
+//        setTitle("Pendaftaran");
+        ActionBar actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + Integer.toHexString(ContextCompat.getColor(this, R.color.background_toolbar)))));
+        actionBar.setTitle(Html.fromHtml("<font color='"+String.format("#%06x", ContextCompat.getColor(this, R.color.text_toolbar) & 0xffffff)+"'>Pendaftaran</font>"));
+        SS = new SpannableStringBuilder(Html.fromHtml("<font color='"+String.format("#%06x", ContextCompat.getColor(this, R.color.text_toolbar) & 0xffffff)+"'>Pendaftaran</font>"));
+        SS.setSpan (new CustomTypefaceSpan("", type), 0, SS.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+        actionBar.setTitle(SS);
+        Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_material);
+        upArrow.setColorFilter(ContextCompat.getColor(this, R.color.icon_toolbar), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
+
         spinProvinsi = (Spinner)findViewById(R.id.spinProvinsi);
         spinKabupaten = (Spinner)findViewById(R.id.spinKabupaten);
         spinKecamatan = (Spinner)findViewById(R.id.spinKecamatan);
         spinDesa = (Spinner)findViewById(R.id.spinDesa);
         edtName = (EditText)findViewById(R.id.edtName);
         edtNoHp = (EditText)findViewById(R.id.edtNoHp);
-        edtPassword = (EditText)findViewById(R.id.edtPassword);
-        edtKonfirmasiPassword = (EditText)findViewById(R.id.edtKonfirmasiPassword);
+        edtEmail = (EditText)findViewById(R.id.edtEmail);
+        edtAlamat = (EditText)findViewById(R.id.edtAlamat);
+        edtTglLahir = (EditText)findViewById(R.id.edtTglLahir);
         btnDafter = (Button)findViewById(R.id.btnDafter);
+        radLaki = (RadioButton) findViewById(R.id.radLaki);
+        radPerempuan = (RadioButton) findViewById(R.id.radPerempuan);
 
         edtName.setTypeface(type);
         edtNoHp.setTypeface(type);
-        edtPassword.setTypeface(type);
-        edtKonfirmasiPassword.setTypeface(type);
+        edtEmail.setTypeface(type);
+        edtAlamat.setTypeface(type);
+        edtTglLahir.setTypeface(type);
         btnDafter.setTypeface(type);
-
-        edtPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-        edtKonfirmasiPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
+        radLaki.setTypeface(type);
+        radPerempuan.setTypeface(type);
 
         if(SharedFunction.getInstance(getApplicationContext()).isNetworkConnected()){
             LoadProv();
         }else{
             Toast.makeText(getApplicationContext(),R.string.internet_error, Toast.LENGTH_LONG).show();
         }
+
+        edtTglLahir.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                final Calendar c = Calendar.getInstance();
+                mYear = c.get(Calendar.YEAR);
+                mMonth = c.get(Calendar.MONTH);
+                mDay = c.get(Calendar.DAY_OF_MONTH);
+
+                DatePickerDialog datePickerDialog = new DatePickerDialog(PendaftaranActivity.this,
+                        new DatePickerDialog.OnDateSetListener() {
+
+                            @Override
+                            public void onDateSet(DatePicker view, int year,
+                                                  int monthOfYear, int dayOfMonth) {
+                                edtTglLahir.setText(dayOfMonth + "-" + (monthOfYear + 1) + "-" + year);
+                                tanggalLahir = String.valueOf(year)+"-"+String.valueOf(monthOfYear + 1)+"-"+String.valueOf(dayOfMonth);
+//                                edtAkhir.setEnabled(true);
+//                                edtAkhir.setText("");
+
+                            }
+                        }, mYear, mMonth, mDay);
+                datePickerDialog.getDatePicker().setMaxDate(c.getTimeInMillis());
+                datePickerDialog.show();
+//                }
+            }
+        });
 
         spinProvinsi.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
             @Override
@@ -121,7 +181,7 @@ public class RegistrasiActivity extends AppCompatActivity {
         btnDafter.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(SharedFunction.getInstance(RegistrasiActivity.this).isNetworkConnected()){
+                if(SharedFunction.getInstance(PendaftaranActivity.this).isNetworkConnected()){
                     if(edtName.getText().toString().equals("")){
                         Toast.makeText(getApplicationContext(),"Nama belum diisi", Toast.LENGTH_SHORT).show();
                         edtName.requestFocus();
@@ -130,26 +190,35 @@ public class RegistrasiActivity extends AppCompatActivity {
                             Toast.makeText(getApplicationContext(),"No HP belum diisi", Toast.LENGTH_SHORT).show();
                             edtNoHp.requestFocus();
                         }else{
-                            if(!edtPassword.getText().toString().equals(edtKonfirmasiPassword.getText().toString())){
-                                Toast.makeText(getApplicationContext(),"Password tidak sesuai!", Toast.LENGTH_SHORT).show();
-                                edtPassword.requestFocus();
+                            if(edtTglLahir.getText().toString().equals("")){
+                                Toast.makeText(getApplicationContext(),"Tanggal lahir belum diisi!", Toast.LENGTH_SHORT).show();
+                                edtTglLahir.requestFocus();
                             }else{
-                                if(spinProvinsi.getSelectedItemPosition()>=0){
-                                    if(spinKabupaten.getSelectedItemPosition()>=0){
-                                        if(spinKecamatan.getSelectedItemPosition()>=0){
-                                            if(spinDesa.getSelectedItemPosition()>=0){
-                                                RegisterProcess();
+                                if(edtAlamat.getText().toString().equals("")){
+                                    Toast.makeText(getApplicationContext(),"Alamat belum diisi!", Toast.LENGTH_SHORT).show();
+                                    edtAlamat.requestFocus();
+                                }else{
+                                    if(radLaki.isChecked()||radPerempuan.isChecked()){
+                                        if(spinProvinsi.getSelectedItemPosition()>=0){
+                                            if(spinKabupaten.getSelectedItemPosition()>=0){
+                                                if(spinKecamatan.getSelectedItemPosition()>=0){
+                                                    if(spinDesa.getSelectedItemPosition()>=0){
+                                                        RegisterProcess();
+                                                    }else{
+                                                        Toast.makeText(getApplicationContext(),"Desa belum dipilih!",Toast.LENGTH_SHORT).show();
+                                                    }
+                                                }else{
+                                                    Toast.makeText(getApplicationContext(),"Kecamatan belum dipilih!",Toast.LENGTH_SHORT).show();
+                                                }
                                             }else{
-                                                Toast.makeText(getApplicationContext(),"Desa belum dipilih!",Toast.LENGTH_SHORT).show();
+                                                Toast.makeText(getApplicationContext(),"Kabupaten belum dipilih!",Toast.LENGTH_SHORT).show();
                                             }
                                         }else{
-                                            Toast.makeText(getApplicationContext(),"Kecamatan belum dipilih!",Toast.LENGTH_SHORT).show();
+                                            Toast.makeText(getApplicationContext(),"Provinsi belum dipilih!",Toast.LENGTH_SHORT).show();
                                         }
                                     }else{
-                                        Toast.makeText(getApplicationContext(),"Kabupaten belum dipilih!",Toast.LENGTH_SHORT).show();
+                                        Toast.makeText(getApplicationContext(),"Jenis kelamin belum dipilih!", Toast.LENGTH_SHORT).show();
                                     }
-                                }else{
-                                    Toast.makeText(getApplicationContext(),"Provinsi belum dipilih!",Toast.LENGTH_SHORT).show();
                                 }
                             }
                         }
@@ -162,7 +231,7 @@ public class RegistrasiActivity extends AppCompatActivity {
     }
 
     public void LoadProv(){
-        progressDialog = new ProgressDialog(RegistrasiActivity.this);
+        progressDialog = new ProgressDialog(PendaftaranActivity.this);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
         StringRequest stringRequest = new StringRequest(
@@ -179,7 +248,7 @@ public class RegistrasiActivity extends AppCompatActivity {
                             JSONObject obj = new JSONObject(response);
                             JSONArray jsonArray = obj.getJSONArray("hasil");
                             if(jsonArray.length()==0){
-                                Toast.makeText(RegistrasiActivity.this,"Tidak ada data", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PendaftaranActivity.this,"Tidak ada data", Toast.LENGTH_SHORT).show();
                             }else{
                                 for (int i=0; i<jsonArray.length(); i++) {
                                     JSONObject isiArray = jsonArray.getJSONObject(i);
@@ -188,7 +257,7 @@ public class RegistrasiActivity extends AppCompatActivity {
                                     listkdprov.add(kdprov);
                                     listnmprov.add(nmprov);
                                 }
-                                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(RegistrasiActivity.this, android.R.layout.simple_spinner_item, listnmprov);
+                                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(PendaftaranActivity.this, android.R.layout.simple_spinner_item, listnmprov);
                                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 spinProvinsi.setAdapter(dataAdapter);
                             }
@@ -202,7 +271,7 @@ public class RegistrasiActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
                         Toast.makeText(
-                                RegistrasiActivity.this,
+                                PendaftaranActivity.this,
                                 error.getMessage(),
                                 Toast.LENGTH_LONG
                         ).show();
@@ -222,7 +291,7 @@ public class RegistrasiActivity extends AppCompatActivity {
     }
 
     public void LoadKab(final String kdprov){
-        progressDialog = new ProgressDialog(RegistrasiActivity.this);
+        progressDialog = new ProgressDialog(PendaftaranActivity.this);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
         StringRequest stringRequest = new StringRequest(
@@ -239,7 +308,7 @@ public class RegistrasiActivity extends AppCompatActivity {
                             JSONObject obj = new JSONObject(response);
                             JSONArray jsonArray = obj.getJSONArray("hasil");
                             if(jsonArray.length()==0){
-                                Toast.makeText(RegistrasiActivity.this,"Tidak ada data", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PendaftaranActivity.this,"Tidak ada data", Toast.LENGTH_SHORT).show();
                             }else{
                                 for (int i=0; i<jsonArray.length(); i++) {
                                     JSONObject isiArray = jsonArray.getJSONObject(i);
@@ -248,7 +317,7 @@ public class RegistrasiActivity extends AppCompatActivity {
                                     listkdkabkota.add(kdkabkota);
                                     listnmkabkota.add(nmkabkota);
                                 }
-                                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(RegistrasiActivity.this, android.R.layout.simple_spinner_item, listnmkabkota);
+                                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(PendaftaranActivity.this, android.R.layout.simple_spinner_item, listnmkabkota);
                                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 spinKabupaten.setAdapter(dataAdapter);
                             }
@@ -262,7 +331,7 @@ public class RegistrasiActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
                         Toast.makeText(
-                                RegistrasiActivity.this,
+                                PendaftaranActivity.this,
                                 error.getMessage(),
                                 Toast.LENGTH_LONG
                         ).show();
@@ -284,7 +353,7 @@ public class RegistrasiActivity extends AppCompatActivity {
 
 
     public void LoadKec(final String kdprov, final String kdkabkota){
-        progressDialog = new ProgressDialog(RegistrasiActivity.this);
+        progressDialog = new ProgressDialog(PendaftaranActivity.this);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
         StringRequest stringRequest = new StringRequest(
@@ -301,7 +370,7 @@ public class RegistrasiActivity extends AppCompatActivity {
                             JSONObject obj = new JSONObject(response);
                             JSONArray jsonArray = obj.getJSONArray("hasil");
                             if(jsonArray.length()==0){
-                                Toast.makeText(RegistrasiActivity.this,"Tidak ada data", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PendaftaranActivity.this,"Tidak ada data", Toast.LENGTH_SHORT).show();
                             }else{
                                 for (int i=0; i<jsonArray.length(); i++) {
                                     JSONObject isiArray = jsonArray.getJSONObject(i);
@@ -310,7 +379,7 @@ public class RegistrasiActivity extends AppCompatActivity {
                                     listkdkecamatan.add(kdkecamatan);
                                     listnmkecamatan.add(nmkecamatan);
                                 }
-                                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(RegistrasiActivity.this, android.R.layout.simple_spinner_item, listnmkecamatan);
+                                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(PendaftaranActivity.this, android.R.layout.simple_spinner_item, listnmkecamatan);
                                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 spinKecamatan.setAdapter(dataAdapter);
                             }
@@ -324,7 +393,7 @@ public class RegistrasiActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
                         Toast.makeText(
-                                RegistrasiActivity.this,
+                                PendaftaranActivity.this,
                                 error.getMessage(),
                                 Toast.LENGTH_LONG
                         ).show();
@@ -346,7 +415,7 @@ public class RegistrasiActivity extends AppCompatActivity {
     }
 
     public void LoadDesa(final String kdprov, final String kdkabkota, final String kdkecamatan){
-        progressDialog = new ProgressDialog(RegistrasiActivity.this);
+        progressDialog = new ProgressDialog(PendaftaranActivity.this);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
         StringRequest stringRequest = new StringRequest(
@@ -363,7 +432,7 @@ public class RegistrasiActivity extends AppCompatActivity {
                             JSONObject obj = new JSONObject(response);
                             JSONArray jsonArray = obj.getJSONArray("hasil");
                             if(jsonArray.length()==0){
-                                Toast.makeText(RegistrasiActivity.this,"Tidak ada data", Toast.LENGTH_SHORT).show();
+                                Toast.makeText(PendaftaranActivity.this,"Tidak ada data", Toast.LENGTH_SHORT).show();
                             }else{
                                 for (int i=0; i<jsonArray.length(); i++) {
                                     JSONObject isiArray = jsonArray.getJSONObject(i);
@@ -372,7 +441,7 @@ public class RegistrasiActivity extends AppCompatActivity {
                                     listiddesa.add(kddesa);
                                     listnmdesa.add(nmdesa);
                                 }
-                                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(RegistrasiActivity.this, android.R.layout.simple_spinner_item, listnmdesa);
+                                ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(PendaftaranActivity.this, android.R.layout.simple_spinner_item, listnmdesa);
                                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 spinDesa.setAdapter(dataAdapter);
                             }
@@ -386,7 +455,7 @@ public class RegistrasiActivity extends AppCompatActivity {
                     public void onErrorResponse(VolleyError error) {
                         progressDialog.dismiss();
                         Toast.makeText(
-                                RegistrasiActivity.this,
+                                PendaftaranActivity.this,
                                 error.getMessage(),
                                 Toast.LENGTH_LONG
                         ).show();
@@ -428,7 +497,9 @@ public class RegistrasiActivity extends AppCompatActivity {
                             String message = userDetails.getString("message");
                             String success = userDetails.getString("success");
                             if(success.equals("1")){
-                                SharedFunction.getInstance(getApplicationContext()).openActivityFinish(LoginActivity.class);
+                                Intent i = new Intent(PendaftaranActivity.this,MainActivity.class);
+                                i.putExtra("MENU","MORE");
+                                startActivity(i);
                                 finish();
                             }
                             Toast.makeText(getApplicationContext(),message, Toast.LENGTH_SHORT).show();
@@ -453,15 +524,23 @@ public class RegistrasiActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("function", Constant.FUNCTION_REGISTER);
+                params.put("function", Constant.FUNCTION_PENDAFTARAN);
                 params.put("key", Constant.KEY);
+                params.put("id", Constant.KEY);
                 params.put("nama", edtName.getText().toString());
+                params.put("tgl_lahir", tanggalLahir);
+                if(radLaki.isChecked()){
+                    params.put("jk", "1");
+                }else{
+                    params.put("jk", "0");
+                }
+                params.put("alamat", edtAlamat.getText().toString());
                 params.put("provinsi", listkdprov.get(spinProvinsi.getSelectedItemPosition()));
                 params.put("kabupaten", listkdkabkota.get(spinKabupaten.getSelectedItemPosition()));
                 params.put("kecamatan", listkdkecamatan.get(spinKecamatan.getSelectedItemPosition()));
                 params.put("desa", listiddesa.get(spinDesa.getSelectedItemPosition()));
                 params.put("hp", edtNoHp.getText().toString());
-                params.put("password", edtPassword.getText().toString());
+                params.put("email", edtEmail.getText().toString());
                 return params;
             }
         };
@@ -469,10 +548,25 @@ public class RegistrasiActivity extends AppCompatActivity {
         requestQueue.add(stringRequest);
     }
 
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        android.app.AlertDialog.Builder builder = new android.app.AlertDialog.Builder(PendaftaranActivity.this);
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Intent i = new Intent(PendaftaranActivity.this,MainActivity.class);
+                i.putExtra("MENU","MORE");
+                startActivity(i);
+                finish();
+                break;
+        }
+        return true;
+    }
 
     @Override
     public void onBackPressed() {
-        SharedFunction.getInstance(getApplicationContext()).openActivityFinish(LoginActivity.class);
+        Intent i = new Intent(PendaftaranActivity.this,MainActivity.class);
+        i.putExtra("MENU","MORE");
+        startActivity(i);
+        finish();
     }
 }

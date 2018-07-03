@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<emcorp.studio.mutamtour.Library.SquareLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:layout_margin="5dp"
+    android:orientation="vertical">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Tittle"
+        android:gravity="center"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:id="@+id/tvTittle"
+        android:layout_alignParentBottom="true"/>
+
+    <ImageView
+        android:id="@+id/thumbnail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/tvTittle"
+        android:scaleType="centerCrop" />
+</emcorp.studio.mutamtour.Library.SquareLayout>

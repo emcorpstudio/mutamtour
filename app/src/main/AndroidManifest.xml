@@ -41,7 +41,10 @@
         <activity android:name=".TestimoniActivity" />
         <activity android:name=".ContactUsActivity" />
         <activity android:name=".BantuanActivity" />
-        <activity android:name=".PendaftarActivity"></activity>
+        <activity android:name=".PendaftarActivity" />
+        <activity android:name=".PendaftaranActivity" />
+        <activity android:name=".GalleryActivity" />
+        <activity android:name=".AlbumActivity"></activity>
     </application>
 
 </manifest>

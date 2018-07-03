@@ -9,6 +9,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import emcorp.studio.mutamtour.Fragment.BeritaFragment;
+import emcorp.studio.mutamtour.Fragment.HomeFragment;
 import emcorp.studio.mutamtour.Fragment.MoreFragment;
 import emcorp.studio.mutamtour.Fragment.TentangKamiFragment;
 
@@ -25,7 +26,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
         switch (position) {
             case 0:
-                TentangKamiFragment tab1 = new TentangKamiFragment();
+                HomeFragment tab1 = new HomeFragment();
                 return tab1;
             case 1:
                 TentangKamiFragment tab2 = new TentangKamiFragment();

@@ -2,21 +2,37 @@ package emcorp.studio.mutamtour;
 
 import android.graphics.Color;
 import android.graphics.PorterDuff;
+import android.graphics.Typeface;
+import android.graphics.drawable.ColorDrawable;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.view.ViewPager;
+import android.support.v4.content.ContextCompat;
+import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Html;
+import android.text.SpannableStringBuilder;
+import android.text.Spanned;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.TextView;
 
 import emcorp.studio.mutamtour.Adapter.PagerAdapter;
+import emcorp.studio.mutamtour.Library.CustomTypefaceSpan;
+import emcorp.studio.mutamtour.Library.CustomViewPager;
+import emcorp.studio.mutamtour.Library.TypefaceUtil;
 
 public class MainActivity extends AppCompatActivity {
     TabLayout tabLayout;
+    ActionBar actionBar;
+    Typeface type;
+    SpannableStringBuilder SS;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-//        TypefaceUtil.overrideFont(getApplicationContext(), "SERIF", "fonts/barclays.ttf");
+        TypefaceUtil.overrideFont(getApplicationContext(), "SERIF", "fonts/barclays.ttf");
 
         tabLayout = (TabLayout) findViewById(R.id.tab_layout);
         tabLayout.addTab(tabLayout.newTab().setText("Home"));
@@ -28,17 +44,28 @@ public class MainActivity extends AppCompatActivity {
         tabLayout.getTabAt(2).setIcon(R.drawable.ic_berita);
         tabLayout.getTabAt(3).setIcon(R.drawable.ic_more);
         tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#424242"), PorterDuff.Mode.SRC_IN);
-        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
-        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
-        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
+        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
         tabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
 
-        setTitle("HOME");
 
-        final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
+//        setTitle("HOME");
+        actionBar = getSupportActionBar();
+        actionBar.setBackgroundDrawable(new ColorDrawable(Color.parseColor("#" + Integer.toHexString(ContextCompat.getColor(this, R.color.background_toolbar)))));
+        actionBar.setTitle(Html.fromHtml("<font color='"+String.format("#%06x", ContextCompat.getColor(this, R.color.text_toolbar) & 0xffffff)+"'>HOME</font>"));
+        Drawable upArrow = ContextCompat.getDrawable(this, R.drawable.abc_ic_ab_back_material);
+        upArrow.setColorFilter(ContextCompat.getColor(this, R.color.icon_toolbar), PorterDuff.Mode.SRC_ATOP);
+        getSupportActionBar().setHomeAsUpIndicator(upArrow);
+        actionBar.hide();
+        setCustomFont();
+        type = Typeface.createFromAsset(getAssets(),"fonts/barclays.ttf");
+
+        final CustomViewPager viewPager = (CustomViewPager) findViewById(R.id.pager);
         final PagerAdapter adapter = new PagerAdapter
                 (getSupportFragmentManager(), tabLayout.getTabCount());
         viewPager.setAdapter(adapter);
+        viewPager.disableScroll(true);
         viewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
 
         Bundle extras = getIntent().getExtras();
@@ -63,37 +90,52 @@ public class MainActivity extends AppCompatActivity {
                 switch (tab.getPosition()) {
                     case 0:
                         tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#424242"), PorterDuff.Mode.SRC_IN);
-                        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
-                        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
-                        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
-                        setTitle("HOME");
+                        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
+                        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
+                        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
+                        actionBar.setTitle(Html.fromHtml("<font color='"+String.format("#%06x", ContextCompat.getColor(MainActivity.this, R.color.text_toolbar) & 0xffffff)+"'>HOME</font>"));
+                        actionBar.hide();
                         break;
                     case 1:
-                        tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
+                        tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
                         tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#424242"), PorterDuff.Mode.SRC_IN);
-                        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
-                        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
-                        setTitle("TENTANG KAMI");
+                        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
+                        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
+                        SS = new SpannableStringBuilder(Html.fromHtml("<font color='"+String.format("#%06x", ContextCompat.getColor(MainActivity.this, R.color.text_toolbar) & 0xffffff)+"'>TENTANG KAMI</font>"));
+                        SS.setSpan (new CustomTypefaceSpan("", type), 0, SS.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                        actionBar.setTitle(SS);
+                        actionBar.show();
                         break;
                     case 2:
-                        tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
-                        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
+                        tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
+                        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
                         tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#424242"), PorterDuff.Mode.SRC_IN);
-                        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
-                        setTitle("BERITA");
+                        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
+                        SS = new SpannableStringBuilder(Html.fromHtml("<font color='"+String.format("#%06x", ContextCompat.getColor(MainActivity.this, R.color.text_toolbar) & 0xffffff)+"'>BERITA</font>"));
+                        SS.setSpan (new CustomTypefaceSpan("", type), 0, SS.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                        actionBar.setTitle(SS);
+                        actionBar.show();
                         break;
                     case 3:
-                        tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
-                        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
-                        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
+                        tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
+                        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
+                        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
                         tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#424242"), PorterDuff.Mode.SRC_IN);
-                        setTitle("MORE");
+                        SS = new SpannableStringBuilder(Html.fromHtml("<font color='"+String.format("#%06x", ContextCompat.getColor(MainActivity.this, R.color.text_toolbar) & 0xffffff)+"'>MORE</font>"));
+                        SS.setSpan (new CustomTypefaceSpan("", type), 0, SS.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                        actionBar.setTitle(SS);
+                        actionBar.show();
                         break;
                     default:
                         tabLayout.getTabAt(0).getIcon().setColorFilter(Color.parseColor("#424242"), PorterDuff.Mode.SRC_IN);
-                        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
-                        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
-                        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#FFFFFF"), PorterDuff.Mode.SRC_IN);
+                        tabLayout.getTabAt(1).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
+                        tabLayout.getTabAt(2).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
+                        tabLayout.getTabAt(3).getIcon().setColorFilter(Color.parseColor("#9E9E9E"), PorterDuff.Mode.SRC_IN);
+                        SS = new SpannableStringBuilder(Html.fromHtml("<font color='"+String.format("#%06x", ContextCompat.getColor(MainActivity.this, R.color.text_toolbar) & 0xffffff)+"'>HOME</font>"));
+                        SS.setSpan (new CustomTypefaceSpan("", type), 0, SS.length(), Spanned.SPAN_EXCLUSIVE_INCLUSIVE);
+                        actionBar.setTitle(SS);
+                        actionBar.hide();
+
                 }
             }
 
@@ -107,5 +149,26 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    public void setCustomFont() {
+
+        ViewGroup vg = (ViewGroup) tabLayout.getChildAt(0);
+        int tabsCount = vg.getChildCount();
+
+        for (int j = 0; j < tabsCount; j++) {
+            ViewGroup vgTab = (ViewGroup) vg.getChildAt(j);
+
+            int tabChildsCount = vgTab.getChildCount();
+
+            for (int i = 0; i < tabChildsCount; i++) {
+                View tabViewChild = vgTab.getChildAt(i);
+                if (tabViewChild instanceof TextView) {
+                    //Put your font in assests folder
+                    //assign name of the font here (Must be case sensitive)
+                    ((TextView) tabViewChild).setTypeface(Typeface.createFromAsset(getAssets(), "fonts/barclays.ttf"));
+                }
+            }
+        }
     }
 }
