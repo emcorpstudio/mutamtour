@@ -16,6 +16,9 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data
+            android:name="com.google.android.maps.v2.API_KEY"
+            android:value="@string/google_api_key" />
         <activity android:name=".SplashActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -44,7 +47,8 @@
         <activity android:name=".PendaftarActivity" />
         <activity android:name=".PendaftaranActivity" />
         <activity android:name=".GalleryActivity" />
-        <activity android:name=".AlbumActivity"></activity>
+        <activity android:name=".AlbumActivity" />
+        <activity android:name=".Fragment.MapsActivity"></activity>
     </application>
 
 </manifest>

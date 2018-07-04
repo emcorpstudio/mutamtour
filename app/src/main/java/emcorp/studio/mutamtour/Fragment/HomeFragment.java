@@ -2,6 +2,7 @@ package emcorp.studio.mutamtour.Fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
@@ -11,6 +12,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
@@ -36,9 +38,11 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import emcorp.studio.mutamtour.Library.ButtonClick;
 import emcorp.studio.mutamtour.Library.Constant;
 import emcorp.studio.mutamtour.Library.SharedFunction;
 import emcorp.studio.mutamtour.R;
+import emcorp.studio.mutamtour.WebsiteActivity;
 
 
 public class HomeFragment extends Fragment {
@@ -48,16 +52,63 @@ public class HomeFragment extends Fragment {
     ViewPager viewPager;
     int posPager = -1;
     Timer timer;
+    ImageButton btn1, btn2, btn3, btn4;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         viewPager = (ViewPager) view.findViewById(R.id.pager);
+        btn1 = (ImageButton) view.findViewById(R.id.btn1);
+        btn2 = (ImageButton) view.findViewById(R.id.btn2);
+        btn3 = (ImageButton) view.findViewById(R.id.btn3);
+        btn4 = (ImageButton) view.findViewById(R.id.btn4);
+
+        btn1.setOnTouchListener(new ButtonClick());
+        btn2.setOnTouchListener(new ButtonClick());
+        btn3.setOnTouchListener(new ButtonClick());
+        btn4.setOnTouchListener(new ButtonClick());
+
         if(SharedFunction.getInstance(getContext()).isNetworkConnected()){
             LoadProcess();
         }else{
             Toast.makeText(getContext(),R.string.internet_error, Toast.LENGTH_LONG).show();
         }
+
+        btn1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), MapsActivity.class);
+                startActivity(i);
+                getActivity().finish();
+            }
+        });
+
+        btn2.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), WebsiteActivity.class);
+                startActivity(i);
+                getActivity().finish();
+            }
+        });
+
+        btn3.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), WebsiteActivity.class);
+                startActivity(i);
+                getActivity().finish();
+            }
+        });
+
+        btn4.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent i = new Intent(getActivity(), WebsiteActivity.class);
+                startActivity(i);
+                getActivity().finish();
+            }
+        });
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override

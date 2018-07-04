@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">Mutamtour</string>
     <string name="internet_error">Internet tidak tersedia, periksa koneksi anda !</string>
+    <string name="google_api_key">AIzaSyD3e1zQR71i40GKWB1sI85twnekYZ7OiF0</string>
 </resources>

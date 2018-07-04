@@ -55,7 +55,7 @@ public class LoginActivity extends AppCompatActivity {
         btnLogin = (Button)findViewById(R.id.btnLogin);
         tvRegister = (TextView) findViewById(R.id.tvRegister);
         edtPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
-//        checkLocationPermission();
+        checkLocationPermission();
 //        checkCallPermission();
 
         if(SharedPrefManager.getInstance(getApplicationContext()).getLogin()!=null){
