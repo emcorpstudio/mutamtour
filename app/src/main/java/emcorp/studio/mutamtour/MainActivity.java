@@ -73,11 +73,14 @@ public class MainActivity extends AppCompatActivity {
             switch (extras.getString("MENU")){
                 case "BERITA" :
                     viewPager.setCurrentItem(2);
+                    actionBar.show();
                     break;
                 case "MORE" :
                     viewPager.setCurrentItem(3);
+                    actionBar.show();
                     break;
                 default:
+                    actionBar.hide();
                     viewPager.setCurrentItem(0);
                     break;
             }
