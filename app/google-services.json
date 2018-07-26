@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "772020498905",
+    "firebase_url": "https://mutamtour-368bc.firebaseio.com",
+    "project_id": "mutamtour-368bc",
+    "storage_bucket": "mutamtour-368bc.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:772020498905:android:570a7a22ae666076",
+        "android_client_info": {
+          "package_name": "emcorp.studio.mutamtour"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "772020498905-7a4364lcno82jcpve6fn29ma2utu50d7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "emcorp.studio.mutamtour",
+            "certificate_hash": "02381223bea6e7e1420e4da2d06ae6ff778103d1"
+          }
+        },
+        {
+          "client_id": "772020498905-meh18m16h2qbjgginv8ha1vtjruk320i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAOX_mK7YY29Mylc7nG6htWoYFy2qFCKBM"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "772020498905-meh18m16h2qbjgginv8ha1vtjruk320i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

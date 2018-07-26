@@ -23,9 +23,8 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -141,25 +140,20 @@ public class SlideshowDialogFragment extends DialogFragment {
             View view = layoutInflater.inflate(R.layout.image_fullscreen_preview, container, false);
 
             final ImageView imageViewPreview = (ImageView) view.findViewById(R.id.image_preview);
-//            ImageButton btnShare = (ImageButton) view.findViewById(R.id.btnShare);
-//            ImageButton btnHome = (ImageButton) view.findViewById(R.id.btnHome);
             TextView tvCaption = (TextView) view.findViewById(R.id.tvCaption);
-
-//            btnShare.setOnTouchListener(new ButtonClick());
-//            btnHome.setOnTouchListener(new ButtonClick());
             Image image = images.get(position);
             tvCaption.setText(image.getName());
-//            Glide.with(getActivity()).load(image.getLarge())
-//                    .thumbnail(0.5f)
-//                    .crossFade()
-//                    .diskCacheStrategy(DiskCacheStrategy.ALL)
-//                    .into(imageViewPreview);
 
-//            Picasso.with(getActivity()).load(image.getLarge()).into(imageViewPreview);
-            Picasso.with(getActivity())
+            /*Picasso.with(getActivity())
                     .load(image.getFoto())
                     .memoryPolicy(MemoryPolicy.NO_CACHE)
                     .networkPolicy(NetworkPolicy.NO_CACHE)
+                    .into(imageViewPreview);*/
+            Glide.with(getActivity())
+                    .load(image.getFoto())
+                    .error(R.drawable.ic_logo)
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imageViewPreview);
             Bitmap bmp;
             try {

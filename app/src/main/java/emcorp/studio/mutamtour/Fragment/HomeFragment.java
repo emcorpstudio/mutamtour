@@ -2,7 +2,6 @@ package emcorp.studio.mutamtour.Fragment;
 
 import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.view.PagerAdapter;
@@ -12,20 +11,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -38,11 +36,9 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import emcorp.studio.mutamtour.Library.ButtonClick;
 import emcorp.studio.mutamtour.Library.Constant;
 import emcorp.studio.mutamtour.Library.SharedFunction;
 import emcorp.studio.mutamtour.R;
-import emcorp.studio.mutamtour.WebsiteActivity;
 
 
 public class HomeFragment extends Fragment {
@@ -52,63 +48,18 @@ public class HomeFragment extends Fragment {
     ViewPager viewPager;
     int posPager = -1;
     Timer timer;
-    ImageButton btn1, btn2, btn3, btn4;
+    String tokenFirebase = "";
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_home, container, false);
         getActivity().getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_ALWAYS_HIDDEN);
         viewPager = (ViewPager) view.findViewById(R.id.pager);
-        btn1 = (ImageButton) view.findViewById(R.id.btn1);
-        btn2 = (ImageButton) view.findViewById(R.id.btn2);
-        btn3 = (ImageButton) view.findViewById(R.id.btn3);
-        btn4 = (ImageButton) view.findViewById(R.id.btn4);
-
-        btn1.setOnTouchListener(new ButtonClick());
-        btn2.setOnTouchListener(new ButtonClick());
-        btn3.setOnTouchListener(new ButtonClick());
-        btn4.setOnTouchListener(new ButtonClick());
 
         if(SharedFunction.getInstance(getContext()).isNetworkConnected()){
             LoadProcess();
         }else{
             Toast.makeText(getContext(),R.string.internet_error, Toast.LENGTH_LONG).show();
         }
-
-        btn1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getActivity(), MapsActivity.class);
-                startActivity(i);
-                getActivity().finish();
-            }
-        });
-
-        btn2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getActivity(), WebsiteActivity.class);
-                startActivity(i);
-                getActivity().finish();
-            }
-        });
-
-        btn3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getActivity(), WebsiteActivity.class);
-                startActivity(i);
-                getActivity().finish();
-            }
-        });
-
-        btn4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent i = new Intent(getActivity(), WebsiteActivity.class);
-                startActivity(i);
-                getActivity().finish();
-            }
-        });
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             @Override
@@ -133,6 +84,7 @@ public class HomeFragment extends Fragment {
     }
 
     public void LoadProcess(){
+        tokenFirebase = "";//FirebaseInstanceId.getInstance().getToken();
         progressDialog = new ProgressDialog(getContext());
         progressDialog.setMessage("Loading...");
         progressDialog.show();
@@ -207,9 +159,15 @@ public class HomeFragment extends Fragment {
                 Map<String, String> params = new HashMap<>();
                 params.put("function", Constant.FUNCTION_LISTSLIDER);
                 params.put("key", Constant.KEY);
+//                params.put("key_push", tokenFirebase);
+//                params.put("hp", SharedPrefManager.getInstance(getContext()).getHP());
                 return params;
             }
         };
+        DefaultRetryPolicy policy = new DefaultRetryPolicy(0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
         RequestQueue requestQueue = Volley.newRequestQueue(getContext());
         requestQueue.add(stringRequest);
     }
@@ -237,11 +195,18 @@ public class HomeFragment extends Fragment {
             int padding = context.getResources().getDimensionPixelSize(R.dimen.activity_horizontal_margin);
 //            imageView.setPadding(padding, padding, padding, padding);
             imageView.setScaleType(ImageView.ScaleType.CENTER_CROP);
-            Picasso.with(getContext())
+            /*Picasso.with(getContext())
                     .load(Constant.PICT_URL+listfoto.get(position))
                     .error(R.drawable.ic_logo)
                     .networkPolicy(NetworkPolicy.NO_CACHE)
                     .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                    .into(imageView);*/
+            Glide.with(getContext())
+                    .load(Constant.PICT_URL+listfoto.get(position))
+                    .error(R.drawable.ic_logo)
+                    .thumbnail(0.5f)
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(imageView);
             ((ViewPager) container).addView(imageView, 0);
             return imageView;

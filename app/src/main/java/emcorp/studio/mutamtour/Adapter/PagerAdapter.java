@@ -9,8 +9,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 
 import emcorp.studio.mutamtour.Fragment.BeritaFragment;
+import emcorp.studio.mutamtour.Fragment.DoaFragment;
 import emcorp.studio.mutamtour.Fragment.HomeFragment;
+import emcorp.studio.mutamtour.Fragment.LegalitasFragment;
 import emcorp.studio.mutamtour.Fragment.MoreFragment;
+import emcorp.studio.mutamtour.Fragment.TokohFragment;
 import emcorp.studio.mutamtour.Fragment.TentangKamiFragment;
 
 public class PagerAdapter extends FragmentStatePagerAdapter {
@@ -37,6 +40,15 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
             case 3:
                 MoreFragment tab4 = new MoreFragment();
                 return tab4;
+            case 4:
+                LegalitasFragment tab5 = new LegalitasFragment();
+                return tab5;
+            case 5:
+                TokohFragment tab6 = new TokohFragment();
+                return tab6;
+            case 6:
+                DoaFragment tab7 = new DoaFragment();
+                return tab7;
             default:
                 return null;
         }
@@ -44,6 +56,7 @@ public class PagerAdapter extends FragmentStatePagerAdapter {
 
     @Override
     public int getCount() {
-        return mNumOfTabs;
+//        return mNumOfTabs;
+        return 7;
     }
 }

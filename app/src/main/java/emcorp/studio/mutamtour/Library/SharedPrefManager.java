@@ -19,14 +19,15 @@ public class SharedPrefManager {
     private static final String SHARED_PREF_NAME = "Mutamtour";
 
     private static final String ID = "ID";
-    private static final String KODE = "KODE";
     private static final String NAMA = "NAMA";
-    private static final String ALAMAT = "ALAMAT";
-    private static final String EMAIL = "EMAIL";
     private static final String HP = "HP";
-    private static final String LP = "LP";
+    private static final String EMAIL = "EMAIL";
     private static final String LOGIN = "LOGIN";
-    private static final String TGL = "TGL";
+    private static final String PASSWORD = "PASSWORD";
+    private static final String PROVINSI = "PROVINSI";
+    private static final String KABUPATEN = "KABUPATEN";
+    private static final String KECAMATAN = "KECAMATAN";
+    private static final String DESA = "DESA";
 
     private SharedPrefManager(Context context) {
         mCtx = context;
@@ -60,10 +61,10 @@ public class SharedPrefManager {
         return true;
     }
 
-    public boolean setKODE(String KODE){
+    public boolean setPASSWORD(String PASSWORD){
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(this.KODE,KODE);
+        editor.putString(this.PASSWORD,PASSWORD);
         editor.apply();
         return true;
     }
@@ -72,14 +73,6 @@ public class SharedPrefManager {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(this.NAMA,NAMA);
-        editor.apply();
-        return true;
-    }
-
-    public boolean setALAMAT(String ALAMAT){
-        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(this.ALAMAT,ALAMAT);
         editor.apply();
         return true;
     }
@@ -100,17 +93,31 @@ public class SharedPrefManager {
         return true;
     }
 
-    public boolean setLP(String LP){
+    public boolean setPROVINSI(String PROVINSI){
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(this.LP,LP);
+        editor.putString(this.PROVINSI,PROVINSI);
         editor.apply();
         return true;
     }
-    public boolean setTGL(String TGL){
+    public boolean setKABUPATEN(String KABUPATEN){
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
-        editor.putString(this.TGL,TGL);
+        editor.putString(this.KABUPATEN,KABUPATEN);
+        editor.apply();
+        return true;
+    }
+    public boolean setKECAMATAN(String KECAMATAN){
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(this.KECAMATAN,KECAMATAN);
+        editor.apply();
+        return true;
+    }
+    public boolean setDESA(String DESA){
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(this.DESA,DESA);
         editor.apply();
         return true;
     }
@@ -135,33 +142,41 @@ public class SharedPrefManager {
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(LOGIN, null);
     }
-    public String getNAMA(){
+    public String getPASSWORD(){
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(NAMA, null);
-    }
-    public String getALAMAT(){
-        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(ALAMAT, null);
-    }
-    public String getHP(){
-        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(HP, null);
+        return sharedPreferences.getString(PASSWORD, null);
     }
     public String getEMAIL(){
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(EMAIL, null);
     }
-    public String getLP(){
+    public String getID(){
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(LP, null);
+        return sharedPreferences.getString(ID, null);
     }
-    public String getKODE(){
+    public String getPROVINSI(){
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(KODE, null);
+        return sharedPreferences.getString(PROVINSI, null);
     }
-    public String getTGL(){
+    public String getKABUPATEN(){
         SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
-        return sharedPreferences.getString(TGL, null);
+        return sharedPreferences.getString(KABUPATEN, null);
+    }
+    public String getKECAMATAN(){
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(KECAMATAN, null);
+    }
+    public String getDESA(){
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(DESA, null);
+    }
+    public String getNAMA(){
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(NAMA, null);
+    }
+    public String getHP(){
+        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        return sharedPreferences.getString(HP, null);
     }
 
 

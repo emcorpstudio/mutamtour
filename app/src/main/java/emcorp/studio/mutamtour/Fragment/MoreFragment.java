@@ -19,8 +19,10 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.List;
 
+import emcorp.studio.mutamtour.AccountActivity;
 import emcorp.studio.mutamtour.Adapter.MoreAdapter;
 import emcorp.studio.mutamtour.AlbumActivity;
+import emcorp.studio.mutamtour.AudioActivity;
 import emcorp.studio.mutamtour.BantuanActivity;
 import emcorp.studio.mutamtour.CaraDaftarActivity;
 import emcorp.studio.mutamtour.ContactUsActivity;
@@ -30,6 +32,8 @@ import emcorp.studio.mutamtour.PendaftarActivity;
 import emcorp.studio.mutamtour.PendaftaranActivity;
 import emcorp.studio.mutamtour.R;
 import emcorp.studio.mutamtour.TestimoniActivity;
+import emcorp.studio.mutamtour.PaketActivity;
+import emcorp.studio.mutamtour.VideoActivity;
 import emcorp.studio.mutamtour.WebsiteActivity;
 
 
@@ -53,6 +57,10 @@ public class MoreFragment extends Fragment {
         listjudul.add("Bantuan");
         listjudul.add("Contact Us");
         listjudul.add("Website");
+        listjudul.add("Audio Doa");
+        listjudul.add("Video");
+        listjudul.add("Paket");
+        listjudul.add("Akun Saya");
         listjudul.add("Logout");
 
         listthumbnail.clear();
@@ -64,6 +72,10 @@ public class MoreFragment extends Fragment {
         listthumbnail.add(R.drawable.ic_help);
         listthumbnail.add(R.drawable.ic_contact);
         listthumbnail.add(R.drawable.ic_website);
+        listthumbnail.add(R.drawable.ic_audio);
+        listthumbnail.add(R.drawable.ic_video);
+        listthumbnail.add(R.drawable.ic_paket);
+        listthumbnail.add(R.drawable.ic_tokoh);
         listthumbnail.add(R.drawable.ic_logout);
 
         getAllData();
@@ -105,6 +117,18 @@ public class MoreFragment extends Fragment {
                         Website();
                         break;
                     case 8 :
+                        Audio();
+                        break;
+                    case 9 :
+                        Video();
+                        break;
+                    case 10 :
+                        Paket();
+                        break;
+                    case 11 :
+                        AkunSaya();
+                        break;
+                    case 12 :
                         LogoutProcess();
                         break;
                 }
@@ -117,6 +141,30 @@ public class MoreFragment extends Fragment {
                 return true;
             }
         });
+    }
+
+    public void Paket(){
+        Intent i = new Intent(getContext(), PaketActivity.class);
+        startActivity(i);
+        getActivity().finish();
+    }
+
+    public void AkunSaya(){
+        Intent i = new Intent(getContext(), AccountActivity.class);
+        startActivity(i);
+        getActivity().finish();
+    }
+
+    public void Video(){
+        Intent i = new Intent(getContext(), VideoActivity.class);
+        startActivity(i);
+        getActivity().finish();
+    }
+
+    public void Audio(){
+        Intent i = new Intent(getContext(), AudioActivity.class);
+        startActivity(i);
+        getActivity().finish();
     }
 
     public void Gallery(){

@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="Encoding">
+    <file url="file://$PROJECT_DIR$/app/src/main/java/emcorp/studio/mutamtour/Adapter/AudioAdapter.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/emcorp/studio/mutamtour/Adapter/BeritaAdapter.java" charset="windows-1252" />
+    <file url="file://$PROJECT_DIR$/app/src/main/java/emcorp/studio/mutamtour/Adapter/DoaAdapter.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/emcorp/studio/mutamtour/Adapter/MoreAdapter.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/emcorp/studio/mutamtour/Adapter/PendaftarAdapter.java" charset="windows-1252" />
     <file url="file://$PROJECT_DIR$/app/src/main/java/emcorp/studio/mutamtour/Adapter/TestimoniAdapter.java" charset="windows-1252" />

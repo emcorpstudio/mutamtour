@@ -28,6 +28,7 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -48,6 +49,7 @@ import java.util.Map;
 import emcorp.studio.mutamtour.Library.Constant;
 import emcorp.studio.mutamtour.Library.CustomTypefaceSpan;
 import emcorp.studio.mutamtour.Library.SharedFunction;
+import emcorp.studio.mutamtour.Library.SharedPrefManager;
 import emcorp.studio.mutamtour.Library.TypefaceUtil;
 
 public class PendaftaranActivity extends AppCompatActivity {
@@ -67,6 +69,8 @@ public class PendaftaranActivity extends AppCompatActivity {
     String tanggalLahir = "";
     RadioButton radLaki, radPerempuan;
     SpannableStringBuilder SS;
+    boolean editsession = false;
+    Bundle extras;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -108,6 +112,29 @@ public class PendaftaranActivity extends AppCompatActivity {
         btnDafter.setTypeface(type);
         radLaki.setTypeface(type);
         radPerempuan.setTypeface(type);
+        btnDafter.setText("DAFTAR");
+        extras = getIntent().getExtras();
+        if (extras != null) {
+            if(extras.getString("edit").equals("edit")){
+                editsession = true;
+                edtName.setText(extras.getString("nama"));
+                edtNoHp.setText(extras.getString("hp"));
+                edtEmail.setText(extras.getString("email"));
+                edtTglLahir.setText(extras.getString("tgl_lahir"));
+                String tgl = extras.getString("tgl_lahir");
+                tanggalLahir = tgl.substring(6,10)+"-"+tgl.substring(3,5)+"-"+tgl.substring(0,2);
+
+                if(extras.getString("jk").equals("1")){
+                    radLaki.setChecked(true);
+                    radPerempuan.setChecked(false);
+                }else{
+                    radLaki.setChecked(false);
+                    radPerempuan.setChecked(true);
+                }
+                edtAlamat.setText(extras.getString("alamat"));
+                btnDafter.setText("UDPATE");
+            }
+        }
 
         if(SharedFunction.getInstance(getApplicationContext()).isNetworkConnected()){
             LoadProv();
@@ -203,6 +230,7 @@ public class PendaftaranActivity extends AppCompatActivity {
                                             if(spinKabupaten.getSelectedItemPosition()>=0){
                                                 if(spinKecamatan.getSelectedItemPosition()>=0){
                                                     if(spinDesa.getSelectedItemPosition()>=0){
+                                                        Toast.makeText(getApplicationContext(),tanggalLahir,Toast.LENGTH_SHORT).show();
                                                         RegisterProcess();
                                                     }else{
                                                         Toast.makeText(getApplicationContext(),"Desa belum dipilih!",Toast.LENGTH_SHORT).show();
@@ -228,6 +256,17 @@ public class PendaftaranActivity extends AppCompatActivity {
                 }
             }
         });
+    }
+
+    public Integer findPosition(String kode, List<String> listkode){
+        Integer pos = 0;
+        for(int i=0;i<listkode.size();i++){
+            if(listkode.get(i).equals(kode)){
+                pos = i;
+                break;
+            }
+        }
+        return pos;
     }
 
     public void LoadProv(){
@@ -260,6 +299,9 @@ public class PendaftaranActivity extends AppCompatActivity {
                                 ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(PendaftaranActivity.this, android.R.layout.simple_spinner_item, listnmprov);
                                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 spinProvinsi.setAdapter(dataAdapter);
+                                if(editsession){
+                                    spinProvinsi.setSelection(findPosition(extras.getString("provinsi"),listkdprov));
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -286,6 +328,10 @@ public class PendaftaranActivity extends AppCompatActivity {
                 return params;
             }
         };
+        DefaultRetryPolicy policy = new DefaultRetryPolicy(0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         requestQueue.add(stringRequest);
     }
@@ -320,6 +366,9 @@ public class PendaftaranActivity extends AppCompatActivity {
                                 ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(PendaftaranActivity.this, android.R.layout.simple_spinner_item, listnmkabkota);
                                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 spinKabupaten.setAdapter(dataAdapter);
+                                if(editsession){
+                                    spinKabupaten.setSelection(findPosition(extras.getString("kabupaten"),listkdkabkota));
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -347,6 +396,10 @@ public class PendaftaranActivity extends AppCompatActivity {
                 return params;
             }
         };
+        DefaultRetryPolicy policy = new DefaultRetryPolicy(0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         requestQueue.add(stringRequest);
     }
@@ -382,6 +435,9 @@ public class PendaftaranActivity extends AppCompatActivity {
                                 ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(PendaftaranActivity.this, android.R.layout.simple_spinner_item, listnmkecamatan);
                                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 spinKecamatan.setAdapter(dataAdapter);
+                                if(editsession){
+                                    spinKecamatan.setSelection(findPosition(extras.getString("kecamatan"),listkdkecamatan));
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -410,6 +466,10 @@ public class PendaftaranActivity extends AppCompatActivity {
                 return params;
             }
         };
+        DefaultRetryPolicy policy = new DefaultRetryPolicy(0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         requestQueue.add(stringRequest);
     }
@@ -444,6 +504,9 @@ public class PendaftaranActivity extends AppCompatActivity {
                                 ArrayAdapter<String> dataAdapter = new ArrayAdapter<String>(PendaftaranActivity.this, android.R.layout.simple_spinner_item, listnmdesa);
                                 dataAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
                                 spinDesa.setAdapter(dataAdapter);
+                                if(editsession){
+                                    spinDesa.setSelection(findPosition(extras.getString("desa"),listiddesa));
+                                }
                             }
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -473,6 +536,10 @@ public class PendaftaranActivity extends AppCompatActivity {
                 return params;
             }
         };
+        DefaultRetryPolicy policy = new DefaultRetryPolicy(0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         requestQueue.add(stringRequest);
     }
@@ -524,9 +591,14 @@ public class PendaftaranActivity extends AppCompatActivity {
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
                 Map<String, String> params = new HashMap<>();
-                params.put("function", Constant.FUNCTION_PENDAFTARAN);
+                if(editsession){
+                    params.put("function", Constant.FUNCTION_UPDATEPENDAFTARAN);
+                    params.put("recid", extras.getString("recid"));
+                }else{
+                    params.put("function", Constant.FUNCTION_PENDAFTARAN);
+                }
                 params.put("key", Constant.KEY);
-                params.put("id", Constant.KEY);
+                params.put("id", SharedPrefManager.getInstance(getApplicationContext()).getID());
                 params.put("nama", edtName.getText().toString());
                 params.put("tgl_lahir", tanggalLahir);
                 if(radLaki.isChecked()){
@@ -544,6 +616,10 @@ public class PendaftaranActivity extends AppCompatActivity {
                 return params;
             }
         };
+        DefaultRetryPolicy policy = new DefaultRetryPolicy(0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
     }

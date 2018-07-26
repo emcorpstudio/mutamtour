@@ -13,9 +13,8 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import emcorp.studio.mutamtour.Library.Constant;
 import emcorp.studio.mutamtour.Library.TypefaceUtil;
@@ -54,11 +53,18 @@ public class DetailBeritaActivity extends AppCompatActivity {
             title.setText(extras.getString("title"));
             date.setText(extras.getString("date"));
             content.setText(extras.getString("content"));
-            Picasso.with(DetailBeritaActivity.this)
+            /*Picasso.with(DetailBeritaActivity.this)
                     .load(Constant.PICT_URL+extras.getString("image"))
                     .error(R.drawable.ic_logo)
                     .networkPolicy(NetworkPolicy.NO_CACHE)
                     .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                    .into(image);*/
+            Glide.with(DetailBeritaActivity.this)
+                    .load(Constant.PICT_URL+extras.getString("image"))
+                    .error(R.drawable.ic_logo)
+                    .thumbnail(0.5f)
+                    .crossFade()
+                    .diskCacheStrategy(DiskCacheStrategy.ALL)
                     .into(image);
         }
 

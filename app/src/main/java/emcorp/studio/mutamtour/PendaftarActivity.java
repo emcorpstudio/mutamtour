@@ -22,6 +22,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
@@ -42,10 +43,12 @@ import emcorp.studio.mutamtour.Adapter.PendaftarAdapter;
 import emcorp.studio.mutamtour.Library.Constant;
 import emcorp.studio.mutamtour.Library.CustomTypefaceSpan;
 import emcorp.studio.mutamtour.Library.SharedFunction;
+import emcorp.studio.mutamtour.Library.SharedPrefManager;
 import emcorp.studio.mutamtour.Library.TypefaceUtil;
 
 public class PendaftarActivity extends AppCompatActivity {
     List<String> listrecid = new ArrayList<String>();
+    List<String> listid = new ArrayList<String>();
     List<String> listnama = new ArrayList<String>();
     List<String> listtgl_lahir = new ArrayList<String>();
     List<String> listjk = new ArrayList<String>();
@@ -56,6 +59,10 @@ public class PendaftarActivity extends AppCompatActivity {
     List<String> listkota = new ArrayList<String>();
     List<String> listkecamatan = new ArrayList<String>();
     List<String> listdesa = new ArrayList<String>();
+    List<String> listkdprov = new ArrayList<String>();
+    List<String> listkdkabkota = new ArrayList<String>();
+    List<String> listkdkecamatan = new ArrayList<String>();
+    List<String> listkddesa = new ArrayList<String>();
     ListView list;
     private ProgressDialog progressDialog;
     SpannableStringBuilder SS;
@@ -99,6 +106,7 @@ public class PendaftarActivity extends AppCompatActivity {
                         Log.d("CETAK",response);
                         progressDialog.dismiss();
                         listrecid.clear();
+                        listid.clear();
                         listnama.clear();
                         listtgl_lahir.clear();
                         listjk.clear();
@@ -109,6 +117,10 @@ public class PendaftarActivity extends AppCompatActivity {
                         listkota.clear();
                         listkecamatan.clear();
                         listdesa.clear();
+                        listkdprov.clear();
+                        listkdkabkota.clear();
+                        listkdkecamatan.clear();
+                        listkddesa.clear();
                         try {
                             JSONObject obj = new JSONObject(response);
                             JSONArray jsonArray = obj.getJSONArray("hasil");
@@ -120,6 +132,7 @@ public class PendaftarActivity extends AppCompatActivity {
                                 for (int i=0; i<jsonArray.length(); i++) {
                                     JSONObject isiArray = jsonArray.getJSONObject(i);
                                     String recid = isiArray.getString("recid");
+                                    String id = isiArray.getString("id");
                                     String nama = isiArray.getString("nama");
                                     String tgl_lahir = isiArray.getString("tgl_lahir");
                                     String jk = isiArray.getString("jk");
@@ -130,7 +143,12 @@ public class PendaftarActivity extends AppCompatActivity {
                                     String kota = isiArray.getString("kota");
                                     String kecamatan = isiArray.getString("kecamatan");
                                     String desa = isiArray.getString("desa");
+                                    String kdprov = isiArray.getString("kdprov");
+                                    String kdkabkota = isiArray.getString("kdkabkota");
+                                    String kdkecamatan = isiArray.getString("kdkecamatan");
+                                    String kddesa = isiArray.getString("kddesa");
                                     listrecid.add(recid);
+                                    listid.add(id);
                                     listnama.add(nama);
                                     listtgl_lahir.add(tgl_lahir);
                                     listjk.add(jk);
@@ -141,6 +159,10 @@ public class PendaftarActivity extends AppCompatActivity {
                                     listkota.add(kota);
                                     listkecamatan.add(kecamatan);
                                     listdesa.add(desa);
+                                    listkdprov.add(kdprov);
+                                    listkdkabkota.add(kdkabkota);
+                                    listkdkecamatan.add(kdkecamatan);
+                                    listkddesa.add(kddesa);
                                 }
                                 getAllData();
                             }
@@ -169,6 +191,10 @@ public class PendaftarActivity extends AppCompatActivity {
                 return params;
             }
         };
+        DefaultRetryPolicy policy = new DefaultRetryPolicy(0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
         RequestQueue requestQueue = Volley.newRequestQueue(getApplicationContext());
         requestQueue.add(stringRequest);
     }
@@ -180,19 +206,32 @@ public class PendaftarActivity extends AppCompatActivity {
         list.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                Intent i = new Intent(getActivity(), DetailBeritaActivity.class);
-//                i.putExtra("title",listjudul.get(position));
-//                i.putExtra("date",listcreated_date.get(position));
-//                i.putExtra("content",listisi.get(position));
-//                i.putExtra("image",listthumbnail.get(position));
-//                startActivity(i);
-//                getActivity().finish();
+                if(listid.get(position).equals(SharedPrefManager.getInstance(getApplicationContext()).getID())){
+                    Intent i = new Intent(PendaftarActivity.this, PendaftaranActivity.class);
+                    i.putExtra("edit","edit");
+                    i.putExtra("recid",listrecid.get(position));
+                    i.putExtra("id",listid.get(position));
+                    i.putExtra("nama",listnama.get(position));
+                    i.putExtra("tgl_lahir",listtgl_lahir.get(position));
+                    i.putExtra("jk",listjk.get(position));
+                    i.putExtra("alamat",listalamat.get(position));
+                    i.putExtra("provinsi",listkdprov.get(position));
+                    i.putExtra("kabupaten",listkdkabkota.get(position));
+                    i.putExtra("kecamatan",listkdkecamatan.get(position));
+                    i.putExtra("desa",listkddesa.get(position));
+                    i.putExtra("hp",listhp.get(position));
+                    i.putExtra("email",listemail.get(position));
+                    startActivity(i);
+                    finish();
+                }else{
+                    Toast.makeText(getApplicationContext(),"Anda hanya bisa mengedit pendaftaran anda sendiri!",Toast.LENGTH_SHORT).show();
+                }
             }
         });
         list.setOnItemLongClickListener(new AdapterView.OnItemLongClickListener() {
             @Override
             public boolean onItemLongClick(AdapterView<?> parent, View view, int position, long id) {
-//                dialogAdd(position);
+
                 return true;
             }
         });

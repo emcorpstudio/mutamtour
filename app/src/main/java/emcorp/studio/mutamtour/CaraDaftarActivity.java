@@ -7,10 +7,10 @@ import android.graphics.PorterDuff;
 import android.graphics.Typeface;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.Html;
 import android.text.SpannableStringBuilder;
 import android.text.Spanned;
@@ -21,15 +21,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -99,11 +99,18 @@ public class CaraDaftarActivity extends AppCompatActivity {
                                     String foto = isiArray.getString("foto");
                                     String cara = isiArray.getString("cara");
                                     tvCara.setText(cara);
-                                    Picasso.with(CaraDaftarActivity.this)
+                                    /*Picasso.with(CaraDaftarActivity.this)
                                             .load(Constant.PICT_URL+foto)
                                             .error(R.drawable.ic_logo)
                                             .networkPolicy(NetworkPolicy.NO_CACHE)
                                             .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                                            .into(img);*/
+                                    Glide.with(CaraDaftarActivity.this)
+                                            .load(Constant.PICT_URL+foto)
+                                            .error(R.drawable.ic_logo)
+                                            .thumbnail(0.5f)
+                                            .crossFade()
+                                            .diskCacheStrategy(DiskCacheStrategy.ALL)
                                             .into(img);
                                 }
                             }
@@ -132,6 +139,10 @@ public class CaraDaftarActivity extends AppCompatActivity {
                 return params;
             }
         };
+        DefaultRetryPolicy policy = new DefaultRetryPolicy(0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
         RequestQueue requestQueue = Volley.newRequestQueue(CaraDaftarActivity.this);
         requestQueue.add(stringRequest);
     }

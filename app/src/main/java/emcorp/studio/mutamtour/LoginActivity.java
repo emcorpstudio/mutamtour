@@ -18,12 +18,14 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.AuthFailureError;
+import com.android.volley.DefaultRetryPolicy;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -39,10 +41,11 @@ import emcorp.studio.mutamtour.Library.TypefaceUtil;
 public class LoginActivity extends AppCompatActivity {
     EditText edtHp, edtPassword;
     Button btnLogin;
+    String tokenFirebase = "";
     private ProgressDialog progressDialog;
     public static final int MY_PERMISSIONS_REQUEST_LOCATION = 99;
     private static final int MY_PERMISSIONS_REQUEST_CALL_PHONE = 1;
-    TextView tvRegister;
+    TextView tvRegister, tvForgot;
     SpannableStringBuilder SS;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -54,21 +57,23 @@ public class LoginActivity extends AppCompatActivity {
         edtPassword = (EditText)findViewById(R.id.edtPassword);
         btnLogin = (Button)findViewById(R.id.btnLogin);
         tvRegister = (TextView) findViewById(R.id.tvRegister);
+        tvForgot = (TextView) findViewById(R.id.tvForgot);
         edtPassword.setTransformationMethod(PasswordTransformationMethod.getInstance());
         checkLocationPermission();
 //        checkCallPermission();
 
         if(SharedPrefManager.getInstance(getApplicationContext()).getLogin()!=null){
             if(SharedPrefManager.getInstance(getApplicationContext()).getLogin().equals("1")){
-                SharedFunction.getInstance(LoginActivity.this).openActivityFinish(MainActivity.class);
-                finish();
+//                SharedFunction.getInstance(LoginActivity.this).openActivityFinish(MainActivity.class);
+//                finish();
+                LoginProcess(SharedPrefManager.getInstance(getApplicationContext()).getHP(),SharedPrefManager.getInstance(getApplicationContext()).getPASSWORD());
             }
         }
         btnLogin.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(edtHp.getText().toString().equals("")){
-                    Toast.makeText(getApplicationContext(),"Email belum diisi", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getApplicationContext(),"HP belum diisi", Toast.LENGTH_SHORT).show();
                     edtHp.requestFocus();
                 }else{
                     if(edtPassword.getText().toString().equals("")){
@@ -76,7 +81,7 @@ public class LoginActivity extends AppCompatActivity {
                         edtPassword.requestFocus();
                     }else{
                         if(SharedFunction.getInstance(LoginActivity.this).isNetworkConnected()){
-                            LoginProcess();
+                            LoginProcess(edtHp.getText().toString(),edtPassword.getText().toString());
                         }else{
                             Toast.makeText(getApplicationContext(),"Internet tidak tersedia, periksa koneksi anda !", Toast.LENGTH_LONG).show();
                         }
@@ -90,6 +95,13 @@ public class LoginActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 SharedFunction.getInstance(LoginActivity.this).openActivityFinish(RegistrasiActivity.class);
+                finish();
+            }
+        });
+        tvForgot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                SharedFunction.getInstance(LoginActivity.this).openActivityFinish(ForgotPasswordActivity.class);
                 finish();
             }
         });
@@ -175,7 +187,9 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    public void LoginProcess(){
+    public void LoginProcess(final String hp, final String password){
+        tokenFirebase = FirebaseInstanceId.getInstance().getToken();
+//        Toast.makeText(getApplicationContext(),tokenFirebase,Toast.LENGTH_SHORT).show();
         progressDialog = new ProgressDialog(this);
         progressDialog.setMessage("Loading...");
         progressDialog.show();
@@ -196,11 +210,28 @@ public class LoginActivity extends AppCompatActivity {
                             String recid = userDetails.getString("recid");
                             String name = userDetails.getString("nama");
                             String hp = userDetails.getString("hp");
+                            String provinsi = userDetails.getString("provinsi");
+                            String kabupaten = userDetails.getString("kabupaten");
+                            String kecamatan = userDetails.getString("kecamatan");
+                            String desa = userDetails.getString("desa");
                             if(success.equals("1")){
                                 //Succes
                                 SharedPrefManager.getInstance(getApplicationContext()).setID(recid);
                                 SharedPrefManager.getInstance(getApplicationContext()).setNAMA(name);
                                 SharedPrefManager.getInstance(getApplicationContext()).setHP(hp);
+                                SharedPrefManager.getInstance(getApplicationContext()).setPROVINSI(provinsi);
+                                SharedPrefManager.getInstance(getApplicationContext()).setKABUPATEN(kabupaten);
+                                SharedPrefManager.getInstance(getApplicationContext()).setKECAMATAN(kecamatan);
+                                SharedPrefManager.getInstance(getApplicationContext()).setDESA(desa);
+                                if(SharedPrefManager.getInstance(getApplicationContext()).getLogin()!=null){
+                                    if(SharedPrefManager.getInstance(getApplicationContext()).getLogin().equals("1")){
+                                        SharedPrefManager.getInstance(getApplicationContext()).setPASSWORD(SharedPrefManager.getInstance(getApplicationContext()).getPASSWORD());
+                                    }else{
+                                        SharedPrefManager.getInstance(getApplicationContext()).setPASSWORD(edtPassword.getText().toString());
+                                    }
+                                }else{
+                                    SharedPrefManager.getInstance(getApplicationContext()).setPASSWORD(edtPassword.getText().toString());
+                                }
                                 SharedPrefManager.getInstance(getApplicationContext()).isLogin();
                                 SharedFunction.getInstance(LoginActivity.this).openActivityFinish(MainActivity.class);
                                 finish();
@@ -229,11 +260,17 @@ public class LoginActivity extends AppCompatActivity {
                 Map<String, String> params = new HashMap<>();
                 params.put("function", Constant.FUNCTION_LOGIN);
                 params.put("key", Constant.KEY);
-                params.put("hp", edtHp.getText().toString());
-                params.put("password", edtPassword.getText().toString());
+                params.put("hp", hp);
+                params.put("password", password);
+                params.put("key_push", tokenFirebase);
+                Log.d("key_push",tokenFirebase);
                 return params;
             }
         };
+        DefaultRetryPolicy policy = new DefaultRetryPolicy(0,
+                DefaultRetryPolicy.DEFAULT_MAX_RETRIES,
+                DefaultRetryPolicy.DEFAULT_BACKOFF_MULT);
+        stringRequest.setRetryPolicy(policy);
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(stringRequest);
 //        RequestHandler.getInstance(this).addToRequestQueue(stringRequest);

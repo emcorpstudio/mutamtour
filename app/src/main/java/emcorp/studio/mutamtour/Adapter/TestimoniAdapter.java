@@ -12,9 +12,8 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import com.squareup.picasso.MemoryPolicy;
-import com.squareup.picasso.NetworkPolicy;
-import com.squareup.picasso.Picasso;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.load.engine.DiskCacheStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -51,11 +50,18 @@ public class TestimoniAdapter extends ArrayAdapter<String> {
         title.setText(listjudul.get(position));
         date.setText(listcreated_date.get(position));
         short_content.setText(listisi.get(position));
-        Picasso.with(getContext())
+        /*Picasso.with(getContext())
                 .load(Constant.PICT_URL+listthumbnail.get(position))
                 .error(R.drawable.ic_logo)
                 .networkPolicy(NetworkPolicy.NO_CACHE)
                 .memoryPolicy(MemoryPolicy.NO_CACHE, MemoryPolicy.NO_STORE)
+                .into(image);*/
+        Glide.with(getContext())
+                .load(Constant.PICT_URL+listthumbnail.get(position))
+                .error(R.drawable.ic_logo)
+                .thumbnail(0.5f)
+                .crossFade()
+                .diskCacheStrategy(DiskCacheStrategy.ALL)
                 .into(image);
         return rowView;
     }
